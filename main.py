@@ -10,17 +10,14 @@ from vosk import Model, KaldiRecognizer
 import pyttsx3
 
 
-
+## ------------ Setting up Ollama LLM -------------
 url = "http://localhost:11434/api/generate"
 
 headers = {
     'Content-Type': 'application/json',
 }
-
-
-    
-
-prompt = ""
+ ## sending in an empty request to preload the model
+response = requests.post(url, headers=headers, data=json.dumps({"model": "mistral",}))
 
 ## ------------ Setting up Text to Speech -------------
 engine = pyttsx3.init()
@@ -30,10 +27,54 @@ def text_to_speech(text):
     engine.say(text)
     engine.runAndWait()
 
+def keywordSearch(text):
+    if text == " ":
+        return text, False
+    validKeyword = False
+    #-- cleaning STT output by looking for keyword
+    if "hey levi" in text:
+        text = text[8:]
+        validKeyword = True
+    elif "hey i" in text:
+        text = text[5:]
+        validKeyword = True
+    elif "hayley" in text:
+        text = text[6:]
+        validKeyword = True
+    elif "helluva" or "however" in text:
+        text = text[7:]
+        validKeyword = True
+    elif "hermes i" in text:
+        text = text[8:]
+        validKeyword = True
+    elif "we have i" or "haley's i" in text:
+        text = text[9:]
+        validKeyword = True 
+    elif "hey with i" or "hey look i" or "hurry and i" or "her lawyer" or "hey we die" or "hey we've i" in text: 
+        text = text[10:]
+        validKeyword = True
+    elif "hey we've i" or "hey we were" or "hey would i" or "hey leave i" or "hey we like" or "hello there" or "haley right" in text:
+        text = text[11:]
+        validKeyword = True
+    elif "he'll move i" in text:
+        text = text[12:]
+        validKeyword = True
+    elif "he'll leave i" or "hey knew that" in text:
+        text = text[13:]
+        validKeyword = True
+    else:
+        if "hey" in text:
+            text = text[9:]
+            validKeyword = True
+        
+    print("validKeyword in keywordSearch: " + str(validKeyword))
+
+    return validKeyword, text
+
 def run_assistant():
 
     ## ------------ Setting up Speech Recognizer -----------
-    model = Model(r"C:\Users\11soc\OneDrive\Desktop\LEVI.v1\vosk-model-small-en-us-0.15")
+    model = Model(r"/home/epequign/Desktop/Levi/LEVI.v1/vosk-model-small-en-us-0.15")
     recognizer = KaldiRecognizer(model, 16000)
 
     mic = pyaudio.PyAudio()
@@ -42,40 +83,35 @@ def run_assistant():
 
     ## ------------- Listening for keyword ------------------
     print("say something")
+    listening = True
+    validKeyword = False
     while True:
         data=stream.read(8192)
         text = ""
-        if recognizer.AcceptWaveform(data):
-            text=recognizer.Result()
-            text.lower()
-            text = text[14:-3]
-            print(text)
+        if listening:
+            if recognizer.AcceptWaveform(data):
+                text=recognizer.Result()
+                text.lower()
+                text = text[14:-3]
+                print("OG Text:  " +text)
+                validKeyword,text = keywordSearch(text)
+            if validKeyword is True:
+                listening = False
 
 
-        if "hey" in text:
+        if validKeyword is True:
+            print("prompt:  " +text)
             if "stop" in text:
                 print("bye")
                 sys.exit()
-            
-            #-- cleaning STT output
-            if "we've i" in text:
-                text = text[11:]
-            elif "we were" in text:
-                text = text[11:]
-            elif "we have i" in text:
-                text = text[13:]
-            else:
-                text = text[9:]
-            print(text)
 
             #-- sending input to the Mistral Model --
-            prompt =  "Your name is Levi. Now, let's discuss, in one sentence: " + text
+            prompt =  "Your name is Levi. Lets continue to discuss. In one sentence: " + text
             data = {
                 "model": "mistral",
                 "stream": False,
                 "prompt": prompt
             }
-
             response = requests.post(url, headers=headers, data=json.dumps(data))
 
             if response.status_code == 200:
@@ -85,9 +121,11 @@ def run_assistant():
                 print(actual_response)
                 text_to_speech(actual_response)
                 print("worked")
+                listening = True
+                validKeyword = False
+                print("listening: " + str(listening))
+                print("validKeyword: " + str(validKeyword))
             else:
                 print("Error:", response.status_code, response.text)
-#-----------------------------------------------------------------------------
-            
-
+#-----------------------------------------------------------------------------       
 threading.Thread(target=run_assistant()).start()
