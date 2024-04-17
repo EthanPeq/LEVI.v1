@@ -28,45 +28,46 @@ def text_to_speech(text):
     engine.runAndWait()
 
 def keywordSearch(text):
-    if text == " ":
+    if text == "":
         return text, False
+    
     validKeyword = False
     #-- cleaning STT output by looking for keyword
     if "hey levi" in text:
         text = text[8:]
-        validKeyword = True
+        validKeyword = True        
     elif "hey i" in text:
         text = text[5:]
         validKeyword = True
     elif "hayley" in text:
         text = text[6:]
-        validKeyword = True
-    elif "helluva" or "however" in text:
+        validKeyword = True     
+    elif "helluva" in text or "however" in text:
         text = text[7:]
         validKeyword = True
     elif "hermes i" in text:
         text = text[8:]
-        validKeyword = True
-    elif "we have i" or "haley's i" in text:
+        validKeyword = True    
+    elif "we have i" in text or "haley's i" in text:
         text = text[9:]
-        validKeyword = True 
-    elif "hey with i" or "hey look i" or "hurry and i" or "her lawyer" or "hey we die" or "hey we've i" in text: 
+        validKeyword = True     
+    elif "hey with i" in text or "hey look i" in text or "hurry and i" in text or "her lawyer" in text or "hey we die" in text: 
         text = text[10:]
-        validKeyword = True
-    elif "hey we've i" or "hey we were" or "hey would i" or "hey leave i" or "hey we like" or "hello there" or "haley right" in text:
+        validKeyword = True    
+    elif "hey we've i" in text or "hey we were" in text or "hey would i" in text or "hey leave i" in text or "hey we like" in text or "hello there" in text or "haley right" in text:
         text = text[11:]
-        validKeyword = True
-    elif "he'll move i" in text:
+        validKeyword = True    
+    elif "he'll move i" in text :
         text = text[12:]
-        validKeyword = True
-    elif "he'll leave i" or "hey knew that" in text:
+        validKeyword = True    
+    elif "he'll leave i" in text or "hey knew that" in text:
         text = text[13:]
-        validKeyword = True
+        validKeyword = True     
     else:
         if "hey" in text:
             text = text[9:]
             validKeyword = True
-        
+                 
     print("validKeyword in keywordSearch: " + str(validKeyword))
 
     return validKeyword, text
@@ -86,17 +87,17 @@ def run_assistant():
     listening = True
     validKeyword = False
     while True:
-        data=stream.read(8192)
         text = ""
+        data=stream.read(8192)
         if listening:
             if recognizer.AcceptWaveform(data):
                 text=recognizer.Result()
                 text.lower()
                 text = text[14:-3]
-                print("OG Text:  " +text)
+                print("OG Text:" +text+".")
                 validKeyword,text = keywordSearch(text)
-            if validKeyword is True:
-                listening = False
+                if validKeyword is True:
+                    listening = False
 
 
         if validKeyword is True:
@@ -120,11 +121,8 @@ def run_assistant():
                 actual_response = data["response"]
                 print(actual_response)
                 text_to_speech(actual_response)
-                print("worked")
-                listening = True
+                listening = False
                 validKeyword = False
-                print("listening: " + str(listening))
-                print("validKeyword: " + str(validKeyword))
             else:
                 print("Error:", response.status_code, response.text)
 #-----------------------------------------------------------------------------       
