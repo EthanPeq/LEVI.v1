@@ -9,6 +9,8 @@ from vosk import Model, KaldiRecognizer
 
 import pyttsx3
 
+import pygame
+
 
 ## ------------ Setting up Ollama LLM -------------
 url = "http://localhost:11434/api/generate"
@@ -72,6 +74,16 @@ def keywordSearch(text):
 
     return validKeyword, text
 
+def playMusic():
+    pygame.mixer.init()
+    pygame.mixer.music.load("Craft-Sale-Song.wav")
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+    
+    print("song finished")
+
 def run_assistant():
 
     ## ------------ Setting up Speech Recognizer -----------
@@ -106,24 +118,30 @@ def run_assistant():
                 print("bye")
                 sys.exit()
 
-            #-- sending input to the Mistral Model --
-            prompt =  "Your name is Levi. Lets continue to discuss. In one sentence: " + text
-            data = {
-                "model": "mistral",
-                "stream": False,
-                "prompt": prompt
-            }
-            response = requests.post(url, headers=headers, data=json.dumps(data))
 
-            if response.status_code == 200:
-                response_text = response.text
-                data = json.loads(response_text)
-                actual_response = data["response"]
-                print(actual_response)
-                text_to_speech(actual_response)
-                listening = False
-                validKeyword = False
+            # -- filtering through commands --
+            if "play music" in text:
+                playMusic()
+
             else:
-                print("Error:", response.status_code, response.text)
+                #-- sending input to the Mistral Model --
+                prompt =  "Your name is Levi. Lets continue to discuss. In one sentence: " + text
+                data = {
+                    "model": "mistral",
+                    "stream": False,
+                    "prompt": prompt
+                }
+                response = requests.post(url, headers=headers, data=json.dumps(data))
+
+                if response.status_code == 200:
+                    response_text = response.text
+                    data = json.loads(response_text)
+                    actual_response = data["response"]
+                    print(actual_response)
+                    text_to_speech(actual_response)
+                else:
+                    print("Error:", response.status_code, response.text)
+            listening = True
+            validKeyword = False
 #-----------------------------------------------------------------------------       
 threading.Thread(target=run_assistant()).start()
