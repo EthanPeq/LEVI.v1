@@ -67,7 +67,7 @@ def keywordSearch(text):
         if "hey" in text:
             text = text[9:]
             validKeyword = True
-                 
+
     print("validKeyword in keywordSearch: " + str(validKeyword))
 
     return validKeyword, text
