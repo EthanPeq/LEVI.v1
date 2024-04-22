@@ -11,6 +11,8 @@ import pyttsx3
 
 import pygame
 
+import time
+
 
 ## ------------ Setting up Ollama LLM -------------
 url = "http://localhost:11434/api/generate"
@@ -44,7 +46,7 @@ def keywordSearch(text):
     elif "hayley" in text:
         text = text[6:]
         validKeyword = True     
-    elif "helluva" in text or "however" in text:
+    elif "helluva" in text or "however" in text or "here i" in text:
         text = text[7:]
         validKeyword = True
     elif "hermes i" in text:
@@ -110,6 +112,7 @@ def run_assistant():
                 validKeyword,text = keywordSearch(text)
                 if validKeyword is True:
                     listening = False
+                    stream.stop_stream()
 
 
         if validKeyword is True:
@@ -121,6 +124,9 @@ def run_assistant():
 
             # -- filtering through commands --
             if "play music" in text:
+                print(listening)
+                text_to_speech("Sure, playing the greatest song ever!")
+                time.sleep(1)
                 playMusic()
 
             else:
@@ -141,7 +147,9 @@ def run_assistant():
                     text_to_speech(actual_response)
                 else:
                     print("Error:", response.status_code, response.text)
+                    
             listening = True
             validKeyword = False
+            stream.start_stream()
 #-----------------------------------------------------------------------------       
 threading.Thread(target=run_assistant()).start()
