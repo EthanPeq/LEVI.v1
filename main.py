@@ -55,7 +55,7 @@ def keywordSearch(text):
     elif "we have i" in text or "haley's i" in text:
         text = text[9:]
         validKeyword = True     
-    elif "hey with i" in text or "hey look i" in text or "hurry and i" in text or "her lawyer" in text or "hey we die" in text: 
+    elif "hey with i" in text or "hey look i" in text or "hurry and i" in text or "her lawyer" in text or "hey we die" in text or "harry" in text or "henry" in text: 
         text = text[10:]
         validKeyword = True    
     elif "hey we've i" in text or "hey we were" in text or "hey would i" in text or "hey leave i" in text or "hey we like" in text or "hello there" in text or "haley right" in text:
