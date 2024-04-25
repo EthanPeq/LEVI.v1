@@ -40,19 +40,19 @@ def keywordSearch(text):
     if "hey levi" in text:
         text = text[8:]
         validKeyword = True        
-    elif "hey i" in text:
+    elif "hey i" in text or "haley" in text:
         text = text[5:]
         validKeyword = True
     elif "hayley" in text:
         text = text[6:]
         validKeyword = True     
-    elif "helluva" in text or "however" in text or "here i" in text:
+    elif "helluva" in text or "however" in text or "here i" in text or "tell me" in text:
         text = text[7:]
         validKeyword = True
     elif "hermes i" in text:
         text = text[8:]
         validKeyword = True    
-    elif "we have i" in text or "haley's i" in text:
+    elif "we have i" in text or "haley's i" in text or "heroes i" in text:
         text = text[9:]
         validKeyword = True            
     elif "hey with i" in text or "hey look i" in text or "hurry and i" in text or "her lawyer" in text or "hey we die" in text or "harry" in text or "henry" in text: 
@@ -88,6 +88,9 @@ def playMusic():
 
 def run_assistant():
 
+    ## --------------------- Introduction ------------------
+    text_to_speech("Hello, my Name is Levi. Happy to assist you!")
+
     ## ------------ Setting up Speech Recognizer -----------
     model = Model(r"/home/epequign/Desktop/Levi/LEVI.v1/vosk-model-small-en-us-0.15")
     recognizer = KaldiRecognizer(model, 16000)
@@ -97,7 +100,6 @@ def run_assistant():
     stream.start_stream()
 
     ## ------------- Listening for keyword ------------------
-    text_to_speech("Hello, my Name is Levi. Happy to assist you!")
     print("say something")
     listening = True
     validKeyword = False
@@ -125,8 +127,8 @@ def run_assistant():
 
 
             # -- filtering through commands --
-            if "play music" in text:
-                print(listening)
+            # - play music -
+            if "play music" in text or "played music" in text:
                 text_to_speech("Playing the greatest song ever!")
                 time.sleep(1)
                 playMusic()
