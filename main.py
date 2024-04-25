@@ -122,6 +122,7 @@ def run_assistant():
             text_to_speech("Understood!")
             print("prompt:  " +text)
             if "stop" in text:
+                text_to_speech("I'm signing off. I hope you have a good day!")
                 print("bye")
                 sys.exit()
 
