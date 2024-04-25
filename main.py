@@ -54,7 +54,7 @@ def keywordSearch(text):
         validKeyword = True    
     elif "we have i" in text or "haley's i" in text:
         text = text[9:]
-        validKeyword = True     
+        validKeyword = True            
     elif "hey with i" in text or "hey look i" in text or "hurry and i" in text or "her lawyer" in text or "hey we die" in text or "harry" in text or "henry" in text: 
         text = text[10:]
         validKeyword = True    
@@ -97,6 +97,7 @@ def run_assistant():
     stream.start_stream()
 
     ## ------------- Listening for keyword ------------------
+    text_to_speech("Hello, my Name is Levi. Happy to assist you!")
     print("say something")
     listening = True
     validKeyword = False
@@ -116,6 +117,7 @@ def run_assistant():
 
 
         if validKeyword is True:
+            text_to_speech("Understood!")
             print("prompt:  " +text)
             if "stop" in text:
                 print("bye")
@@ -125,7 +127,7 @@ def run_assistant():
             # -- filtering through commands --
             if "play music" in text:
                 print(listening)
-                text_to_speech("Sure, playing the greatest song ever!")
+                text_to_speech("Playing the greatest song ever!")
                 time.sleep(1)
                 playMusic()
 
