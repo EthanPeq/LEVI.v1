@@ -20,8 +20,18 @@ url = "http://localhost:11434/api/generate"
 headers = {
     'Content-Type': 'application/json',
 }
- ## sending in an empty request to preload the model
-response = requests.post(url, headers=headers, data=json.dumps({"model": "mistral",}))
+
+def check_network_connection():
+    while True:
+        try:
+             ## sending in an empty request to preload the model
+            requests.post(url, headers=headers, data=json.dumps({"model": "mistral",}))
+            return True
+        except requests.ConnectionError:
+            print("waiting")
+            time.sleep(10)
+
+check_network_connection()
 
 ## ------------ Setting up Text to Speech -------------
 engine = pyttsx3.init()
