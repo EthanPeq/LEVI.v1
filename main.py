@@ -24,7 +24,7 @@ headers = {
 def check_network_connection():
     while True:
         try:
-             ## sending in an empty request to preload the model
+            ## sending in an empty request to preload the model
             requests.post(url, headers=headers, data=json.dumps({"model": "mistral",}))
             return True
         except requests.ConnectionError:
@@ -41,6 +41,7 @@ def text_to_speech(text):
     engine.say(text)
     engine.runAndWait()
 
+## ------------ Keyword Search -------------
 def keywordSearch(text):
     if text == "":
         return text, False
@@ -86,6 +87,7 @@ def keywordSearch(text):
 
     return validKeyword, text
 
+## ------------ Play Music -------------
 def playMusic():
     pygame.mixer.init()
     pygame.mixer.music.load("Craft-Sale-Song.wav")
@@ -96,13 +98,14 @@ def playMusic():
     
     print("song finished")
 
+## ------------ Run Assistant! -------------
 def run_assistant():
 
     ## --------------------- Introduction ------------------
     text_to_speech("Hello, my Name is Levi. Happy to assist you!")
 
     ## ------------ Setting up Speech Recognizer -----------
-    model = Model(r"/home/epequign/Desktop/Levi/LEVI.v1/vosk-model-small-en-us-0.15")
+    model = Model(r"vosk-model-small-en-us-0.15")
     recognizer = KaldiRecognizer(model, 16000)
 
     mic = pyaudio.PyAudio()
